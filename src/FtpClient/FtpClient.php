@@ -139,17 +139,21 @@ class FtpClient implements Countable
     /**
      * Open a FTP connection.
      *
-     * @param string $host
-     * @param bool   $ssl
-     * @param int    $port
-     * @param int    $timeout
+     * @param string $host The FTP server host name or IP address.
+     * @param bool   $ssl Set true to use SSL.
+     * @param int    $port The FTP server port.
+     * @param int    $timeout The connection timeout.
+     * @param bool   $ssh2 Set true to connect to sFTP.
      *
      * @return FTPClient
      * @throws FtpException If unable to connect
      */
-    public function connect($host, $ssl = false, $port = 21, $timeout = 90)
+    public function connect($host, $ssl = false, $port = 21, $timeout = 90, $ssh2 = false)
     {
-        if ($ssl) {
+        if($ssh2) {
+            $this->conn = $this->ftp->ssh2_connect($host,$port);
+        }
+        elseif ($ssl) {
             $this->conn = @$this->ftp->ssl_connect($host, $port, $timeout);
         } else {
             $this->conn = @$this->ftp->connect($host, $port, $timeout);
